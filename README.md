@@ -5,7 +5,7 @@ This project is still under development
 This is a Cryptocurrency developed for better understanding over blockchain technology.
 But i think it will help you too, if you interested in blockchain.
 
-#Frameworks/Techs/Tools:
+# Frameworks/Techs/Tools:
  - .Net core
  - MongoDb
  - Docker
