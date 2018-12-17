@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="PersistedTransaction.cs" />
-    <Compile Remove="APIModels.cs" />
+    <ProjectReference Include="..\SyCoin.Models\SyCoin.Models.csproj" />
   </ItemGroup>
 </Project>

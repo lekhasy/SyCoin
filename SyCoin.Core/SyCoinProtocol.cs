@@ -5,16 +5,24 @@ using SyCoin.Helpers;
 using System.Linq;
 using SyCoin.Models;
 using SyCoin.DataProvider;
+using SyCoin.Core.Miner;
+using System.IO;
+using System.Reflection;
 
 namespace SyCoin.Core
 {
     public class SyCoinProtocol
     {
         IBlockDataProvider DataProvider;
+        UTXOManager UTXOManager;
+        BlockMiner BlockMiner = new BlockMiner();
+        DifficultTargetVerifier DifficultTargetVerifier;
 
-        public SyCoinProtocol(IBlockDataProvider dataProvider)
+        public SyCoinProtocol(IBlockDataProvider dataProvider, UTXOManager utxoManager)
         {
             DataProvider = dataProvider;
+            UTXOManager = utxoManager;
+            DifficultTargetVerifier = new DifficultTargetVerifier(dataProvider);
 
             // Add genesis block to the chain
             InitGenesisBlock();
@@ -24,36 +32,73 @@ namespace SyCoin.Core
         {
             if (DataProvider.GetChainLength() != 0) return;
 
-            SyCoinTransaction genesisData = new SyCoinTransaction
-            {
-                Sender = "Sy",
-                Receiver = "Minh",
-                Amount = 1000
-            };
+            var buildDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var filePath = buildDir + @"/GenesisBlock.json";
 
-            var genesisBlock = new SyCoinBlock(new SyCoinTransaction[] { genesisData }, 1, "0000", DifficultTargetVerifier.GetCurrentDifficultTarger(DataProvider));
-            var (nonce, timestamp) = FindNonce(genesisBlock);
-            genesisBlock.Seal(nonce, timestamp);
-            DataProvider.AddBlock(new PersistedBlock { Block = genesisBlock });
+            // read genesis block from GenesisBlock.json file
+            FileInfo gnsFile = new FileInfo(filePath);
+            using(var reader = gnsFile.OpenText())
+            {
+                var jsonContent = reader.ReadToEnd();
+                var GenesisBlock = JsonConvert.DeserializeObject<PersistedBlock>(jsonContent);
+                DataProvider.AddBlock(GenesisBlock);
+            }
         }
 
         public SyCoinBlock MineNewBlock()
         {
-            var previousHash = HashingHelper.HashObject(GetLatestBlock());
+            var previousHash = HashingHelper.ByteArrayToHexDigit(HashingHelper.HashObject(GetLatestBlock()));
             var block = new SyCoinBlock(DataProvider.GetTopTransactionFeesExcept(1000,
                                         new string[] { }),
                                         (uint)DataProvider.GetChainLength() + 1,
-                                        previousHash, DifficultTargetVerifier.GetCurrentDifficultTarger(DataProvider)
-                                        );
-            var (nonce, timestamp) = FindNonce(block);
+                                        previousHash, DifficultTargetVerifier.GetCurrentDifficultTarget());
+
+            var (nonce, timestamp) = BlockMiner.Mine(block);
             block.Seal(nonce, timestamp);
-            DataProvider.AddBlock(new PersistedBlock { Block = block, Header = new BlockHeader()});
+            DataProvider.AddBlock(new PersistedBlock { Block = block, Header = new BlockHeader() });
             return block;
         }
 
-        public void AddTransaction(string sender, string receiver, decimal amount, decimal fee)
+        public void AddTransaction(SycoinTransactionContent transactionContent, string privateKey)
         {
-            DataProvider.AddTransaction(new SyCoinTransaction() { Sender = sender, Receiver = receiver, Amount = amount, Fee = fee });
+            #region Verify transaction input and output
+
+            // Input UTXO check
+            transactionContent.Input.All(input =>
+            {
+                var UTXOInfo = UTXOManager.GetUTXOInfo(input.TransactionHash, input.PrevOutputIndex);
+                if (UTXOInfo != null) throw new Exceptions.NonUTXOException(input);
+                return true;
+            });
+
+            var allInputTransactions = DataProvider.GetTransactions(transactionContent.Input.Select(i => i.TransactionHash));
+
+            #region Output validation
+            var inputAmount = transactionContent.Input.Select(input =>
+            {
+                var prev_trans = allInputTransactions.FirstOrDefault(x => x.Hash == input.TransactionHash);
+                var prev_output = prev_trans.Content.Outputs.ElementAt(input.PrevOutputIndex);
+                return prev_output.Amount;
+            }).Sum();
+
+            var outputAmount = transactionContent.Outputs.Sum(output => output.Amount);
+
+            if (inputAmount < outputAmount) throw new Exceptions.InputNotEnoughTokenException();
+            #endregion
+
+            #endregion
+
+            var contentHash = HashingHelper.HashObject(transactionContent);
+            var rsa = RSAHelper.CreateRsaProviderFromPrivateKey(privateKey);
+            var publicKey = RSAHelper.ExportPublicKeyToPEMFormat(rsa);
+
+            DataProvider.AddTransaction(new SyCoinTransaction()
+            {
+                Signature = HashingHelper.ByteArrayToHexDigit(DigitalSignatureHelper.SignHash(contentHash, rsa.ExportParameters(true))),
+                Hash = HashingHelper.ByteArrayToHexDigit(contentHash),
+                PublicKey = publicKey,
+                Content = transactionContent
+            });
         }
 
         //public bool IsChainValid(IBlockDataProvider chain)
@@ -68,22 +113,6 @@ namespace SyCoin.Core
         //    var previousBlock = chain.First();
         //    var blockIndex = 1;
         //}
-
-        private (uint nonce, long timestamp) FindNonce(SyCoinBlock block)
-        {
-            var clonedBlock = block.Clone();
-            using (var nonceTimestampManipulator = new NonceTimestampManipulator())
-            {
-                while (true)
-                {
-                    clonedBlock.Nonce = nonceTimestampManipulator.GetNextNonce();
-                    clonedBlock.Timestamp = nonceTimestampManipulator.CurrentTimestamp;
-                    var blockHash = HashingHelper.HashObject(clonedBlock);
-                    if (HashingHelper.IsHashMeetTarget(blockHash, DifficultTargetVerifier.GetCurrentDifficultTarger(DataProvider)))
-                        return (clonedBlock.Nonce, clonedBlock.Timestamp);
-                }
-            }
-        }
 
         public PersistedBlock GetLatestBlock() => DataProvider.GetLatestBlock();
         public PersistedBlock GetGenesisBlock() => DataProvider.GetGenesisBlock();

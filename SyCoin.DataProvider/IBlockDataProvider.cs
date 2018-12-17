@@ -13,5 +13,8 @@ namespace SyCoin.DataProvider
         PersistedBlock GetGenesisBlock();
         IEnumerable<SyCoinTransaction> GetTopTransactionFeesExcept(uint max_transaction, IEnumerable<string> exceptedTransactionIds);
         IEnumerable<PersistedBlock> GetChainPart(uint start, uint limit);
+        PersistedBlock GetBlock(uint index);
+        IEnumerable<PersistedBlock> GetBlocks(IEnumerable<uint> indexes);
+        IEnumerable<SyCoinTransaction> GetTransactions(IEnumerable<string> transactionHashes);
     }
 }

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace SyCoin.Core
+namespace SyCoin.Core.Miner
 {
     internal class NonceTimestampManipulator : IDisposable
     {

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SyCoin.DataProvider.Mongo;
 using SyCoin.DataProvider;
 using SyCoin.Models;
 using SyCoin.Core;
@@ -31,6 +32,8 @@ namespace SyCoin.API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<AppSettingModel>(Configuration.GetSection("ApplicationSettings"));
             services.AddSingleton<IBlockDataProvider>(sp => new MongoBlockDataProvider(sp.GetService<IOptions<AppSettingModel>>()));
+            services.AddSingleton<IUTXODataProvider>(sp => new MongoUTXODataProvider(sp.GetService<IOptions<AppSettingModel>>()));
+            services.AddSingleton<UTXOManager>();
             services.AddSingleton<SyCoinProtocol>();
         }
 

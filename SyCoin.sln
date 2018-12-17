@@ -11,6 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyCoin.DataProvider", "SyCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyCoin.Models", "SyCoin.Models\SyCoin.Models.csproj", "{60B4B06C-A78E-4254-BCD5-B823EBDAC27A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyCoin.Helpers.Tests", "SyCoin.Helpers.Tests\SyCoin.Helpers.Tests.csproj", "{6381CA00-7430-447A-AD94-94568E6C1EDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyCoin.API.Models", "SyCoin.API.Models\SyCoin.API.Models.csproj", "{7F555EB3-CD70-410C-A2AA-1B61E434F98D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyCoin.Genesis", "SyCoin.Genesis\SyCoin.Genesis.csproj", "{373F8219-A6E6-4F31-875C-4A3B0C62285A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,5 +43,17 @@ Global
 		{60B4B06C-A78E-4254-BCD5-B823EBDAC27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60B4B06C-A78E-4254-BCD5-B823EBDAC27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60B4B06C-A78E-4254-BCD5-B823EBDAC27A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6381CA00-7430-447A-AD94-94568E6C1EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6381CA00-7430-447A-AD94-94568E6C1EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6381CA00-7430-447A-AD94-94568E6C1EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6381CA00-7430-447A-AD94-94568E6C1EDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F555EB3-CD70-410C-A2AA-1B61E434F98D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F555EB3-CD70-410C-A2AA-1B61E434F98D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F555EB3-CD70-410C-A2AA-1B61E434F98D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F555EB3-CD70-410C-A2AA-1B61E434F98D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{373F8219-A6E6-4F31-875C-4A3B0C62285A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{373F8219-A6E6-4F31-875C-4A3B0C62285A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{373F8219-A6E6-4F31-875C-4A3B0C62285A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{373F8219-A6E6-4F31-875C-4A3B0C62285A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

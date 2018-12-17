@@ -7,13 +7,14 @@ namespace SyCoin.Helpers
 {
     public static class HashingHelper
     {
-        public static string HashObject(object obj)
+        public static byte[] HashObject(object obj)
         {
             string objInJson = JsonConvert.SerializeObject(obj);
             var data = Encoding.UTF8.GetBytes(objInJson);
-            var hashBytes = SHA256.Create().ComputeHash(data);
-            return BitConverter.ToString(hashBytes).Replace("-", "");
+            return SHA256.Create().ComputeHash(data);
         }
+
+        public static string ByteArrayToHexDigit(byte[] data) => BitConverter.ToString(data).Replace("-", "");
 
         public static bool IsHashMeetTarget(string hash, uint target)
         {

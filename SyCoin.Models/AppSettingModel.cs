@@ -14,5 +14,6 @@ namespace SyCoin.Models
         public string DbName { get; set; }
         public string LedgerCollectionName { get; set; }
         public string MempoolCollectionName { get; set; }
+        public string UTXOCollectionName { get; set; }
     }
 }

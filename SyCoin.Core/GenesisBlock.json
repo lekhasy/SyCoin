@@ -1,0 +1,26 @@
+﻿{
+  "Block": {
+    "Index": 1,
+    "Data": [
+      {
+        "Content": {
+          "Input": null,
+          "Outputs": [
+            {
+              "Receiver": "-----BEGIN PUBLIC KEY-----\nMIIBKwIBAAKCAQEAvCZyvuzDqObk3qvHE4HKaXB2KiaYz2PfEI2KqT7yrSKlLlPg\n/clw7EMeCQPDrljt+onBh8zuFMmeq51T73vtxr78C4PWiLLGtD+CeSoJDsDMiehs\nMRE1A5Hn6jBWE5R+Z7fR1BL/5BC+nB7nZx9bIslXw7lonra5BwHQOnfkl4Hyg6PN\n+qOQwideM7NkvEJ10oG1oiXPM3iwXBN2XNItr5tBzTpCmP3daykZ7oR9ZFhshwNL\n0tbQWS1Bxm3bvQUvR6URSIzuqBG4zvfgYoUwQLRlDO20KJT5nK+hSNYsxpuU3Wh2\nhWTiBDZEYOZkqNggkuJFcUf80zw3SqcPyBTQlwIDAQABAgMBAAECAwEAAQIDAQAB\nAgMBAAECAwEAAQIDAQAB\n-----END PUBLIC KEY-----\n",
+              "Amount": 50.0
+            }
+          ]
+        },
+        "Hash": null,
+        "Signature": null,
+        "PublicKey": null
+      }
+    ],
+    "PreviousHash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "Nonce": 1513715,
+    "Timestamp": 1545021070,
+    "Target": 4
+  },
+  "Header": {}
+}

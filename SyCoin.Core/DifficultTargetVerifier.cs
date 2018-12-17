@@ -4,9 +4,16 @@ using SyCoin.DataProvider;
 
 namespace SyCoin.Core
 {
-    internal static class DifficultTargetVerifier
+    public class DifficultTargetVerifier
     {
-        public static uint GetCurrentDifficultTarger(IBlockDataProvider chain)
+        IBlockDataProvider DataProvider;
+
+        public DifficultTargetVerifier(IBlockDataProvider dataProvider)
+        {
+            DataProvider = dataProvider;
+        }
+
+        public uint GetCurrentDifficultTarget()
         {
             return 4;
         }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SyCoin.Core;
 using SyCoin.DataProvider;
 using SyCoin.Models;
+using SyCoin.API.Models;
 
 namespace SyCoin.API.Controllers
 {
@@ -21,10 +22,19 @@ namespace SyCoin.API.Controllers
             DataProvider = dataProvider;
         }
 
+        [HttpPost]
+        public void AddTransaction(AddTransactionModel model)
+        {
+            //CoinProtocol.AddTransaction()
+        }
+
         [HttpGet]
         public IEnumerable<PersistedBlock> GetChainPart(uint start, uint limit)
         {
             return DataProvider.GetChainPart(start, limit);
         }
+
+        //[HttpPost]
+        //public void AddTransaction(sender, receiver, )
     }
 }

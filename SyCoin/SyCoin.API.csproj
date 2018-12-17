@@ -16,5 +16,6 @@
     <ProjectReference Include="..\SyCoin.Models\SyCoin.Models.csproj" />
     <ProjectReference Include="..\SyCoin.DataProvider\SyCoin.DataProvider.csproj" />
     <ProjectReference Include="..\SyCoin.Core\SyCoin.Core.csproj" />
+    <ProjectReference Include="..\SyCoin.API.Models\SyCoin.API.Models.csproj" />
   </ItemGroup>
 </Project>

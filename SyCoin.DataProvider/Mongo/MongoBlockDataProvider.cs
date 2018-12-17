@@ -1,39 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using SyCoin.Models;
+using System.Linq;
+using Microsoft.Extensions.Options;
 
-namespace SyCoin.DataProvider
+namespace SyCoin.DataProvider.Mongo
 {
-    public class MongoBlockDataProvider : IBlockDataProvider
+    public class MongoBlockDataProvider : MongoDataProvider, IBlockDataProvider
     {
-        private AppSettingModel AppSetting;
-        public MongoBlockDataProvider(IOptions<AppSettingModel> options)
-        {
-            var pack = new ConventionPack
-            {
-                new IgnoreExtraElementsConvention(true)
-            };
-            ConventionRegistry.Register("My convention", pack, t => true);
-
-            AppSetting = options.Value;
-        }
-
-        MongoClient GetClient()
-        {
-            return new MongoClient(new MongoClientSettings
-            {
-                Server = new MongoServerAddress(AppSetting.MongoDb.Host, AppSetting.MongoDb.Port)
-            });
-        }
-
-        IMongoDatabase GetDatabase()
-        {
-            return GetClient().GetDatabase(AppSetting.MongoDb.DbName);
-        }
+        public MongoBlockDataProvider(IOptions<AppSettingModel> options) : base(options) { }
 
         IMongoCollection<PersistedBlock> GetLedgerCollection()
         {
@@ -78,6 +54,28 @@ namespace SyCoin.DataProvider
         public IEnumerable<PersistedBlock> GetChainPart(uint start, uint limit)
         {
             return GetLedgerCollection().Find(x => true).SortBy(x => x.Block.Index).Skip((int)start).Limit((int)limit).ToList();
+        }
+
+        public PersistedBlock GetBlock(uint index)
+        {
+            return GetLedgerCollection().Find(x => index == x.Block.Index).First();
+        }
+
+        public IEnumerable<PersistedBlock> GetBlocks(IEnumerable<uint> indexes)
+        {
+            return GetLedgerCollection().Find(x => indexes.Contains(x.Block.Index)).ToList();
+        }
+
+        public IEnumerable<SyCoinTransaction> GetTransactions(IEnumerable<string> transactionHashes)
+        {
+            var transactionsInChain = GetLedgerCollection()
+                                        .Find(x => x.Block.Data.Any(trans => transactionHashes.Contains(trans.Hash))).ToList()
+                                        .SelectMany(bl => bl.Block.Data).Where(trans => transactionHashes.Contains(trans.Hash));
+
+            var transactionsInMempool = GetMemPoolCollection()
+                                        .Find(trans => transactionHashes.Contains(trans.Hash)).ToList();
+
+            return transactionsInChain.Concat(transactionsInMempool);
         }
     }
 }

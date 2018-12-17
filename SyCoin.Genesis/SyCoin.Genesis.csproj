@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SyCoin.Helpers\SyCoin.Helpers.csproj" />
+    <ProjectReference Include="..\SyCoin.Models\SyCoin.Models.csproj" />
+    <ProjectReference Include="..\SyCoin.Core\SyCoin.Core.csproj" />
+  </ItemGroup>
+</Project>
